@@ -1,4 +1,4 @@
-
+% Need to add overlap functionality
 
 function [z] = window_signal(signal, window_type, window_len)
 
@@ -46,5 +46,4 @@ function [z] = window_signal(signal, window_type, window_len)
 		z(i+1:i+window_len) = current_window;
 		i = i + window_len;
     end
-	sound(z,44100);
 end
