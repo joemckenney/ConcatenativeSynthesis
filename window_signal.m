@@ -1,49 +1,51 @@
-% Need to add overlap functionality
+function [z] = window_signal(signal, fs, windowing_function, nfft, hop_size)
+%   By:
+%   Joseph McKenney
+%   Mills College, Oakland, CA
+%   12-Oct-2012	
+%
+%   
+%   signal: input signal
+%   fs: sampling frequency 
+%   window_tpye: windowing function to be applied to each slice    
+%   nfft: width, in sample, of each window
+%   hop_size: the percentage overlap 
+%
 
-function [z] = window_signal(signal, window_type, window_len)
-
-	signal 		= to_mono(signal);
-	window_type = lower(window_type)
+    signal 		= to_mono(signal);
+    signal      = remove_dc_offset(signal);
+	windowing_function = lower(windowing_function);
 	signal_len	= length(signal); 
 	
-	if(~power_of_two(window_len))
-		window_len=2^nextpow2(window_len);
-	end          
-
-	switch window_type
-        case 'triangle'
-            window_data = window(@triang, window_len);
-        case 'rectangle'
-            window_data = window(@rectwin, window_len);
-        case 'hamming'
-            window_data = window(@hamming, window_len);
-        case 'gaussian'
-            window_data = window(@gausswin, window_len,2.5);
-        case 'kaiser'
-            window_data = window(@kaiser, window_len,5);
-        case 'bartlett'
-            window_data = window(@bartlett, window_len);
-        case 'blackman-harris'
-            window_data = window(@blackmanharris, window_len);
-        case 'hann'
-            window_data = window(@hann, window_len);
-		case 'tukey, 0.75'
-			windowData = window(@tukeywin, window_len, 0.75);
-		case 'tukey, 0.5'
-			window_data = window(@tukeywin, window_len, 0.5);
-		case 'tukey, 0.25'
-			window_data = window(@tukeywin, window_len, 0.25);
-        otherwise
-			fprintf('Window shape %s does not exist! Using hamming\n', shape);
-            window_data = window(@hamming, num_samples);
-    end
+	if(~power_of_two(nfft))
+		nfft=2^nextpow2(nfft);
+    end          
+    
+    %determine potential length of result
+    windows = ceil(signal_len/nfft);
+    windows =  windows * ceil(1 / hop_size);
+    potential_length = windows * nfft;
+    
+    z = zeros(potential_length, 1); 
+    display(length(z));
+        
+    window_data = apply_window(windowing_function, nfft);
 
     i = 0;
-	z = zeros(window_len+ceil(signal_len),1);
- 
-    while i<length(signal) - window_len
-	    current_window = signal(i+1:i+window_len).*window_data;
-		z(i+1:i+window_len) = current_window;
-		i = i + window_len;
+    j = 0;
+    row = 1;
+    while i<signal_len-nfft;
+	    slice = signal(i+1:i+nfft).*window_data;
+        
+        %.:...... under construction
+        %:: start feature vector creation process
+        %feature_vector = build_feature_vector(slice, fs);
+        %feature_matrix(row,:) = feature_vector; 
+        row = row+1;
+		
+        z(j+1:j+nfft) = slice;
+		j = j + nfft;
+        i = i + nfft*hop_size;
+        
     end
 end
