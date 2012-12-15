@@ -1,17 +1,16 @@
-function [z] = window_signal(signal, fs, win_fn, nfft, hop_size)
 %   By:
 %   Joseph McKenney
 %   Mills College, Oakland, CA
-%   12-Oct-2012	
+%   12-Oct-2012 
 %
 %   
-%   signal: input signal
-%   fs: sampling frequency 
-%   win_fn: windowing function to be applied to each slice    
-%   nfft: width, in sample, of each window
-%   hop_size: the percentage overlap 
+%   @params signal: input signal
+%   @params fs: sampling frequency 
+%   @params win_fn: windowing function to be applied to each slice    
+%   @params nfft: width, in sample, of each window
+%   @params hop_size: the percentage overlap 
 %
-
+function [z] = window_signal(signal, fs, win_fn, nfft, hop_size)
     signal 		= to_mono(signal);
     signal      = remove_dc_offset(signal);
 	win_fn      = lower(win_fn);

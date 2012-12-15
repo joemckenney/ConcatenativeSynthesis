@@ -14,4 +14,3 @@ function [fund_freq] = fundamental_frequency(slice, fs)
     fund_freq = f(peaks);
     %disp(fund_freq)
 end
-
